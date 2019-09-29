@@ -1,0 +1,35 @@
+.denyButton {
+        -fx-background-color: rgba(197,21,23, 1.0);
+        -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.4) , 5, 0.0 , 0 , 1 );
+        -fx-text-alignment: center;
+}
+
+.denyButton:hover {
+        -fx-background-color: rgba(197,21,23, 0.8);
+}
+
+.denyButton:pressed {
+        -fx-background-color: rgba(197,21,23, 0.5);
+}
+
+.allowButton {
+        -fx-background-color: rgba(91,165,9, 1.0);
+        -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.4) , 5, 0.0 , 0 , 1 );
+        -fx-text-alignment: center;
+}
+
+.allowButton:hover {
+        -fx-background-color: rgba(91,165,9, 0.8);
+}
+
+.allowButton:pressed {
+        -fx-background-color: rgba(91,165,9, 0.5);
+}
+.mainFxmlClass {
+  #pane{
+    -fx-background-size: 600 260;
+    -fx-background-radius: 18 18 18 18;
+    -fx-border-radius: 18 18 18 18;
+    -fx-effect: innershadow(gaussian, #808080, 1, 1.0, 0, 0)
+  }
+}

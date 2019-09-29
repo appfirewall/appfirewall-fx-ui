@@ -1,0 +1,55 @@
+import org.gradle.internal.os.OperatingSystem
+
+ext {
+    operatingSystem = OperatingSystem.current()
+
+    publishedVersion = project.version
+    bundlerScript = file('bin/build-package.sh')
+    applicationLibraryPath = file("${rootProject.buildDir}/libraries")
+    javafxModulePath = file("${rootProject.buildDir}/javafx-modules")
+    mainJar = rootProject.jar.outputs.files[0].name
+    bundlePath = file("${buildDir}/bundle")
+    extraBundlerArguments = []
+
+    if (operatingSystem.isLinux()) {
+        packageType = 'deb'
+        appIcon = file('icons/icon.png')
+        sessionIcon = file('icons/icon.png')
+    }
+    if (publishedVersion.endsWith('-SNAPSHOT')) {
+        publishedVersion = '0.0.1'
+    }
+}
+
+task checkBundlingEnvironment {
+    description 'Check the environment for building the installable bundle'
+    doLast {
+        if (project.hasProperty('javaPackagerPath')) {
+            def packagerFile = file("${javaPackagerPath}/jpackager")
+
+            if (!packagerFile.exists() || !packagerFile.isFile()) {
+                throw new GradleException("The Java Packager '$packagerFile' is missing")
+            }
+        } else {
+            throw new GradleException("Use -PjavaPackagerPath=... to specify the directory containing the Java Packager")
+        }
+    }
+}
+
+task createBundle(type: Exec, dependsOn: [checkBundlingEnvironment]) {
+    description 'Build the installable bundle'
+        commandLine = ['sh',
+                       bundlerScript,
+                       "${-> file("${javaPackagerPath}/jpackager")}",
+                       packageType,
+                       "${javafxModulePath}",
+                       applicationLibraryPath,
+                       bundlePath,
+                       mainJar,
+                       publishedVersion,
+                       appIcon,
+                       *extraBundlerArguments]
+}
+
+createBundle.dependsOn ':copyDependencies', ':copyJavafxModules'
+

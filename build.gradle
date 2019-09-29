@@ -1,0 +1,98 @@
+plugins {
+    id 'application'
+    id("org.openjfx.javafxplugin") version "0.0.7"
+    id "com.google.protobuf" version "0.8.8"
+    id 'idea'
+}
+
+group 'io.appfirewall'
+version project.property("version")
+
+sourceCompatibility = 11
+targetCompatibility = 11
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    runtime 'com.google.flogger:flogger-system-backend:0.4'
+    compile 'com.google.flogger:flogger:0.4'
+    compile 'com.google.guava:guava:27.1-jre'
+    compile 'io.grpc:grpc-netty-shaded:1.20.0'
+    compile 'io.grpc:grpc-netty:1.20.0'
+    compile 'io.grpc:grpc-protobuf:1.20.0'
+    compile 'io.grpc:grpc-stub:1.20.0'
+    compile 'io.netty:netty-transport-native-epoll:4.1.34.Final:linux-x86_64'
+    compile 'javax.annotation:javax.annotation-api:1.3.2'
+    compile 'org.ini4j:ini4j:0.5.4'
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.assertj:assertj-core:3.11.1'
+}
+
+javafx {
+    modules = [
+            'javafx.controls', 'javafx.fxml'
+    ]
+    version = '11.0.2'
+}
+
+run {
+    jvmArgs += [
+            '--add-exports', 'javafx.base/com.sun.javafx.runtime=ALL-UNNAMED'
+    ]
+}
+
+
+mainClassName = 'io.appfirewall.fx.ui.Main'
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'io.appfirewall.fx.ui.Main'
+    }
+    /*
+    jpackager does not support "modular" jars
+    from {
+        configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }*/
+}
+
+clean {
+    delete protobuf.generatedFilesBaseDir
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:3.7.1"
+    }
+    plugins {
+        grpc {
+            artifact = 'io.grpc:protoc-gen-grpc-java:1.20.0'
+        }
+    }
+    generateProtoTasks {
+        all()*.plugins {
+            grpc {}
+        }
+    }
+    generatedFilesBaseDir = "$projectDir/src/generated"
+}
+
+idea {
+    module {
+        sourceDirs += file("${protobuf.generatedFilesBaseDir}/main/java")
+        sourceDirs += file("${protobuf.generatedFilesBaseDir}/main/grpc")
+    }
+}
+
+task copyDependencies(type: Copy) {
+    from configurations.runtime
+    from jar
+    into "${buildDir}/libraries"
+}
+
+task copyJavafxModules(type: Copy) {
+    from configurations.runtimeClasspath
+    include "javafx*${javafx.platform.classifier}.jar"
+    into "${buildDir}/javafx-modules"
+}
