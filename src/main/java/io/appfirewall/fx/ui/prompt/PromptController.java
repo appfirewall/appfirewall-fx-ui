@@ -19,7 +19,6 @@ import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import io.appfirewall.fx.ui.linux.IconLocator;
 import io.appfirewall.fx.ui.linux.LinuxDesktopParser;
-import io.appfirewall.fx.ui.linux.UserParser;
 import io.appfirewall.fx.ui.statistics.Statistics;
 import io.appfirewall.fx.ui.util.DomainUtil;
 

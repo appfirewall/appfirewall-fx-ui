@@ -4,7 +4,6 @@ import com.google.common.flogger.FluentLogger;
 import io.appfirewall.fx.ui.communication.StatisticsHolder;
 import io.appfirewall.fx.ui.linux.IconLocator;
 import io.appfirewall.fx.ui.linux.LinuxDesktopParser;
-import io.appfirewall.fx.ui.linux.UserParser;
 import io.appfirewall.fx.ui.statistics.columns.AppInfoOrTime;
 import io.appfirewall.fx.ui.statistics.columns.EventOfExecutableRow;
 import io.appfirewall.fx.ui.statistics.columns.EventsTableRow;
@@ -325,7 +324,7 @@ public class StatisticsController implements Initializable {
             newData.clear();
             var list = data.entrySet()
                     .stream()
-                    .map(e -> new KeyCountRow(UserParser.getFormattedUserForUid(e.getKey()), e.getValue()))
+                    .map(e -> new KeyCountRow(e.getKey(), e.getValue()))
                     .collect(Collectors.toList());
 
             newData.addAll(list);
